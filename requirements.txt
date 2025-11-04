@@ -17,3 +17,6 @@ redis
 langchain
 openai
 flask-sock
+
+networkx
+
