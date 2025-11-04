@@ -1,3 +1,7 @@
+// Backend base URL injected via /config.js on Hostinger
+// In public_html/config.js, set:  window.API_BASE="https://pywebforgex.onrender.com";
+const API_BASE = (window.API_BASE || '');
+
 let editor;
 require.config({ paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.51.0/min/vs' } });
 require(['vs/editor/editor.main'], function() {
@@ -20,7 +24,7 @@ document.getElementById('btnUpload').onclick = async () => {
   if(!f){ return alert('Choose a file'); }
   const fd = new FormData();
   fd.append('file', f);
-  const res = await fetch('/api/files/upload', { method: 'POST', body: fd });
+  const res = await fetch(`${API_BASE}/api/files/upload`, { method: 'POST', body: fd });
   const j = await res.json();
   if(j.success){
     document.getElementById('projectPath').textContent = j.path;
@@ -32,7 +36,7 @@ document.getElementById('btnUpload').onclick = async () => {
 
 document.getElementById('btnRead').onclick = async () => {
   const p = document.getElementById('pathField').value;
-  const res = await fetch('/api/files/read', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({path:p}) });
+  const res = await fetch(`${API_BASE}/api/files/read`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({path:p}) });
   const j = await res.json();
   if(j.success){
     editor.setValue(j.content);
@@ -44,14 +48,14 @@ document.getElementById('btnRead').onclick = async () => {
 document.getElementById('btnSave').onclick = async () => {
   const p = document.getElementById('pathField').value;
   const content = editor.getValue();
-  const res = await fetch('/api/files/save', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({path:p, content}) });
+  const res = await fetch(`${API_BASE}/api/files/save`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({path:p, content}) });
   const j = await res.json();
   log(j.success ? 'Saved.' : ('Save error: ' + j.error));
 };
 
 document.getElementById('btnAnalyze').onclick = async () => {
   const p = document.getElementById('pathField').value;
-  const res = await fetch('/api/files/read', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({path:p}) });
+  const res = await fetch(`${API_BASE}/api/files/read`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({path:p}) });
   const j = await res.json();
   if(j.success){
     document.getElementById('analysisOut').textContent = JSON.stringify(j.analysis, null, 2);
@@ -61,7 +65,7 @@ document.getElementById('btnAnalyze').onclick = async () => {
 
 document.getElementById('btnAI').onclick = async () => {
   const prompt = document.getElementById('aiInput').value;
-  const res = await fetch('/api/ai/query', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({prompt}) });
+  const res = await fetch(`${API_BASE}/api/ai/query`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({prompt}) });
   const j = await res.json();
   log(j.success ? ('AI: ' + j.response) : ('AI error: ' + j.error));
 };
@@ -69,7 +73,7 @@ document.getElementById('btnAI').onclick = async () => {
 document.getElementById('btnBuild').onclick = async () => {
   const proj = document.getElementById('projectPath').textContent.trim();
   if(!proj) return alert('Upload a project or set a path');
-  const res = await fetch('/api/build/orchestrate', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({path: proj}) });
+  const res = await fetch(`${API_BASE}/api/build/orchestrate`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({path: proj}) });
   const j = await res.json();
   log(j.success ? ('Build: ' + JSON.stringify(j.result)) : ('Build error: ' + j.error));
 };
@@ -77,7 +81,7 @@ document.getElementById('btnBuild').onclick = async () => {
 document.getElementById('btnAutoDoc').onclick = async () => {
   const proj = document.getElementById('projectPath').textContent.trim();
   if(!proj) return alert('Upload a project or set a path');
-  const res = await fetch('/api/docs/autodoc', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({path: proj}) });
+  const res = await fetch(`${API_BASE}/api/docs/autodoc`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({path: proj}) });
   const j = await res.json();
   if(j.success){
     log('AutoDoc ready (markdown length ' + j.markdown.length + ')');
@@ -89,7 +93,7 @@ document.getElementById('btnAutoDoc').onclick = async () => {
 document.getElementById('btnGraph').onclick = async () => {
   const proj = document.getElementById('projectPath').textContent.trim();
   if(!proj) return alert('Upload a project or set a path');
-  const res = await fetch('/api/graphs/deps', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({path: proj}) });
+  const res = await fetch(`${API_BASE}/api/graphs/deps`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({path: proj}) });
   const j = await res.json();
   if(!j.success) return log('Graph error: ' + j.error);
   const g = j.graph;
@@ -114,27 +118,97 @@ document.getElementById('btnGraph').onclick = async () => {
 };
 
 document.getElementById('btnListPlugins').onclick = async () => {
-  const res = await fetch('/api/plugins/list');
+  const res = await fetch(`${API_BASE}/api/plugins/list`);
   const j = await res.json();
   document.getElementById('pluginsOut').textContent = JSON.stringify(j, null, 2);
 };
 
 document.getElementById('btnRunUpper').onclick = async () => {
-  const res = await fetch('/api/plugins/run', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({name:"uppercase", kwargs:{text:"forge me"}}) });
+  const res = await fetch(`${API_BASE}/api/plugins/run`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({name:"uppercase", kwargs:{text:"forge me"}}) });
   const j = await res.json();
   document.getElementById('pluginsOut').textContent = JSON.stringify(j, null, 2);
 };
+
 (function(){
   function token(h){ return document.querySelector(`meta[name="${h}"]`)?.content || ""; }
   function getProjectRoot(){ const el=document.getElementById('projectPath')||document.getElementById('project'); return el? el.value.trim(): (window.projectRoot||''); }
   function getCurrentFile(){ const el=document.getElementById('filePath')||document.querySelector('[data-current-file]'); return el? el.value.trim(): (window.editor&&window.editor.currentFilePath)||''; }
-  async function postJSON(url, body){ return fetch(url,{method:'POST',headers:{'Content-Type':'application/json','X-API-Key':token('x-api-key'),'X-CSRF-Token':token('x-csrf')},body:JSON.stringify(body||{})}); }
-  function openAutoUI(){ const proj=getProjectRoot(), file=getCurrentFile(); if(!proj||!file||!file.endsWith('.py')){ alert('Set project path and open a Python file.'); return; } window.open(`/api/auto_ui/${file}?project=${encodeURIComponent(proj)}`,'_blank'); }
+
+  // Prefix API_BASE for any '/api...' calls
+  async function postJSON(url, body){
+    const full = url.startsWith('/api') ? `${API_BASE}${url}` : url;
+    return fetch(full, {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'X-API-Key':token('x-api-key'),
+        'X-CSRF-Token':token('x-csrf')
+      },
+      body: JSON.stringify(body||{})
+    });
+  }
+
+  function openAutoUI(){
+    const proj=getProjectRoot(), file=getCurrentFile();
+    if(!proj||!file||!file.endsWith('.py')){ alert('Set project path and open a Python file.'); return; }
+    window.open(`${API_BASE}/api/auto_ui/${file}?project=${encodeURIComponent(proj)}`,'_blank');
+  }
+
   function openCLI(){ window.open('/cli.html','_blank'); }
-  async function packageAndDownload(){ const proj=getProjectRoot(); if(!proj){alert('Set project path first.');return;} const name='pywebforge_ready_build.zip'; const r=await postJSON('/api/sandbox/package_and_destroy',{project:proj,name}); const j=await r.json(); if(!j.success){alert('Package failed: '+(j.error||'unknown'));return;} const a=document.createElement('a'); a.href=`/download?path=${encodeURIComponent(j.zip_path)}`; a.download=name; document.body.appendChild(a); a.click(); document.body.removeChild(a); alert(j.message||'Packaged and sandbox destroyed. Thanks for using PyWebForge!'); }
-  async function classifyAndRoute(){ const proj=getProjectRoot(); if(!proj) return; try{ const r=await postJSON('/api/analyze/classify_project',{project:proj}); const j=await r.json(); if(!j.success) return; if(j.mode==='web'){ const file=getCurrentFile()||'app/server.py'; window.open(`/api/auto_ui/${file}?project=${encodeURIComponent(proj)}`,'_blank'); } else if(j.mode==='cli'){ window.open('/cli.html','_blank'); } }catch(e){} }
-  async function startPreview(){ const proj=getProjectRoot(); if(!proj){alert('Set project path first.');return;} const cmd='uvicorn app.main:app --host 127.0.0.1 --port {port}'; const r=await postJSON('/api/sandbox/run_server',{project:proj,cmd,allow_network:true,cpu_secs:180,mem_mb:768}); const j=await r.json(); if(!j.success){alert('Failed to start server: '+(j.error||'unknown'));return;} const url=`/api/sandbox/proxy/?project=${encodeURIComponent(proj)}`; window.open(url,'_blank'); }
-  const autoBtn=document.getElementById('openAutoUiBtn'); const cliBtn=document.getElementById('openCliBtn'); const pkgBtn=document.getElementById('packageBtn'); const prevBtn=document.getElementById('previewBtn');
-  if(autoBtn) autoBtn.onclick=openAutoUI; if(cliBtn) cliBtn.onclick=openCLI; if(pkgBtn) pkgBtn.onclick=packageAndDownload; if(prevBtn) prevBtn.onclick=startPreview;
-  const analyzeBtn=document.getElementById('btnAnalyze'); if(analyzeBtn){ const old=analyzeBtn.onclick; analyzeBtn.onclick=async function(){ if(typeof old==='function'){ try{ await old(); }catch(e){} } setTimeout(classifyAndRoute, 500); }; }
+
+  async function packageAndDownload(){
+    const proj=getProjectRoot(); if(!proj){alert('Set project path first.');return;}
+    const name='pywebforge_ready_build.zip';
+    const r=await postJSON('/api/sandbox/package_and_destroy',{project:proj,name});
+    const j=await r.json();
+    if(!j.success){alert('Package failed: '+(j.error||'unknown'));return;}
+    const a=document.createElement('a');
+    a.href=`${API_BASE}/download?path=${encodeURIComponent(j.zip_path)}`;
+    a.download=name;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    alert(j.message||'Packaged and sandbox destroyed. Thanks for using PyWebForge!');
+  }
+
+  async function classifyAndRoute(){
+    const proj=getProjectRoot(); if(!proj) return;
+    try{
+      const r=await postJSON('/api/analyze/classify_project',{project:proj});
+      const j=await r.json();
+      if(!j.success) return;
+      if(j.mode==='web'){
+        const file=getCurrentFile()||'app/server.py';
+        window.open(`${API_BASE}/api/auto_ui/${file}?project=${encodeURIComponent(proj)}`,'_blank');
+      } else if(j.mode==='cli'){
+        window.open('/cli.html','_blank');
+      }
+    }catch(e){}
+  }
+
+  async function startPreview(){
+    const proj=getProjectRoot(); if(!proj){alert('Set project path first.');return;}
+    const cmd='uvicorn app.main:app --host 127.0.0.1 --port {port}';
+    const r=await postJSON('/api/sandbox/run_server',{project:proj,cmd,allow_network:true,cpu_secs:180,mem_mb:768});
+    const j=await r.json();
+    if(!j.success){alert('Failed to start server: '+(j.error||'unknown'));return;}
+    const url=`${API_BASE}/api/sandbox/proxy/?project=${encodeURIComponent(proj)}`;
+    window.open(url,'_blank');
+  }
+
+  const autoBtn=document.getElementById('openAutoUiBtn');
+  const cliBtn=document.getElementById('openCliBtn');
+  const pkgBtn=document.getElementById('packageBtn');
+  const prevBtn=document.getElementById('previewBtn');
+  if(autoBtn) autoBtn.onclick=openAutoUI;
+  if(cliBtn) cliBtn.onclick=openCLI;
+  if(pkgBtn) pkgBtn.onclick=packageAndDownload;
+  if(prevBtn) prevBtn.onclick=startPreview;
+
+  const analyzeBtn=document.getElementById('btnAnalyze');
+  if(analyzeBtn){
+    const old=analyzeBtn.onclick;
+    analyzeBtn.onclick=async function(){
+      if(typeof old==='function'){ try{ await old(); }catch(e){} }
+      setTimeout(classifyAndRoute, 500);
+    };
+  }
 })();

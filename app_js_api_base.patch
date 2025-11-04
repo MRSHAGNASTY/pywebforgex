@@ -1,0 +1,13 @@
+\
+    --- a/src_original/public/pywebforge_omegax/app/static/js/app.js
+    +++ b/src_original/public/pywebforge_omegax/app/static/js/app.js
+    @@
+    +// Injected: backend base URL from frontend config.js (Hostinger)
+    +const API_BASE = (window.API_BASE || '');
+    +
+    @@
+    -  async function postJSON(url, body){ return fetch(url,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':token('x-csrf')},body:JSON.stringify(body||{})}); }
+    +  async function postJSON(url, body){ return fetch((url.startsWith('/api')? `${API_BASE}${url}` : url),{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':token('x-csrf')},body:JSON.stringify(body||{})}); }
+    @@
+    -  async function packageAndDownload(){ const proj=getProjectRoot(); const r=await fetch('/api/files/download_build'); if(!r.ok){ log('Download failed'); return;} const blob=await r.blob(); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='build.zip'; a.click(); URL.revokeObjectURL(url); log('Packaged and sandbox destroyed. Thanks for using PyWebForge!'); }
+    +  async function packageAndDownload(){ const proj=getProjectRoot(); const r=await fetch(`${API_BASE}/api/files/download_build`); if(!r.ok){ log('Download failed'); return;} const blob=await r.blob(); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='build.zip'; a.click(); URL.revokeObjectURL(url); log('Packaged and sandbox destroyed. Thanks for using PyWebForge!'); }
