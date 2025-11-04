@@ -1,0 +1,13 @@
+import os, pathlib
+API_KEY = os.getenv("PWF_API_KEY", "change-me-now")
+CSRF_SECRET = os.getenv("PWF_CSRF_SECRET", "csrf-secret-change-me")
+CPU_SECS_DEFAULT = int(os.getenv("PWF_CPU_SECS", "60"))
+MEM_MB_DEFAULT   = int(os.getenv("PWF_MEM_MB" , "768"))
+OPEN_FILES_DEFAULT = int(os.getenv("PWF_NOFILE", "256"))
+MAX_STDOUT_BYTES = int(os.getenv("PWF_MAX_STDOUT", "2000000"))
+RUNTIME_ALLOW_NETWORK = (os.getenv("PWF_RUNTIME_NET", "0") == "1")
+TMP_ROOT = pathlib.Path(os.getenv("PWF_TMP_ROOT", "/tmp/pwf_runs")).resolve(); TMP_ROOT.mkdir(parents=True, exist_ok=True)
+WHEEL_CACHE = pathlib.Path(os.getenv("PWF_WHEEL_CACHE", "/tmp/pwf_wheelhouse")).resolve(); WHEEL_CACHE.mkdir(parents=True, exist_ok=True)
+MAX_CONCURRENT_PER_IP = int(os.getenv("PWF_MAX_CONCURRENT_PER_IP", "4"))
+MAX_DISK_PER_USER_MB  = int(os.getenv("PWF_MAX_DISK_PER_USER_MB", "1024"))
+MAX_AGE_HOURS = int(os.getenv("PWF_TMP_MAX_AGE_HOURS", "12"))

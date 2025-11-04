@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>PyWebForge ΩX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <!-- Monaco Editor -->
+  <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.51.0/min/vs/loader.min.js"></script>
+  <!-- D3 for graphs -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+</head>
+<body>
+<header>
+  <h1>PyWebForge ΩX</h1>
+  <div class="meta" id="serverMeta">Ready</div>
+</header>
+
+<main class="grid">
+  <section class="panel">
+    <h3>Upload / Project</h3>
+    <input type="file" id="fileInput" />
+    <button id="btnUpload">Upload</button>
+    <div id="projectPath" class="small"></div>
+    <hr/>
+    <button id="btnGraph">Build Dependency Graph</button>
+    <div id="graph"></div>
+  </section>
+
+  <section class="panel">
+    <h3>Editor</h3>
+    <div id="editor" style="height:400px;border:1px solid #333"></div>
+    <div class="row">
+      <input id="pathField" placeholder="File path" />
+      <button id="btnRead">Read</button>
+      <button id="btnSave">Save</button>
+      <button id="btnAnalyze">Analyze</button>
+    </div>
+    <pre id="analysisOut" class="console"></pre>
+  </section>
+
+  <section class="panel">
+    <h3>AI & Console</h3>
+    <textarea id="aiInput" rows="4" placeholder="Ask AI..."></textarea>
+    <div class="row">
+      <button id="btnAI">Ask</button>
+      <button id="btnBuild">Build</button>
+      <button id="btnAutoDoc">Auto-Doc</button>
+    </div>
+    <pre id="console" class="console">>>> ΩX ready.</pre>
+    <h4>Plugins</h4>
+    <button id="btnListPlugins">List Plugins</button>
+    <button id="btnRunUpper">Run 'uppercase'</button>
+    <pre id="pluginsOut" class="console"></pre>
+  </section>
+</main>
+
+<script src="/static/js/app.js"></script>
+
+<div class="row" id="pwf-extras-toolbar" style="margin-top:8px; gap:8px;">
+  <button id="openAutoUiBtn">⚙️ Auto-UI (current file)</button>
+  <button id="openCliBtn">🖥️ Open Sandbox CLI</button>
+  <button id="packageBtn">📦 Package & Download</button>
+  <button id="previewBtn">🌐 Preview Web Server</button>
+</div>
+<input id="projectPath" placeholder="/abs/path/to/project" />
+<input id="filePath" placeholder="relative/path/to/module.py" />
+<meta name="x-api-key" content="change-me-now">
+<meta name="x-csrf" content="csrf-secret-change-me">
+
+</body>
+</html>

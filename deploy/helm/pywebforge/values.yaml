@@ -1,0 +1,9 @@
+image:
+  repository: ghcr.io/your/pywebforge
+  tag: latest
+service:
+  type: ClusterIP
+  port: 7860
+env:
+  PYWEBFORGE_KEYS: 'admin:change-me,editor:edit,viewer:view'
+  EgressDeny: '1'

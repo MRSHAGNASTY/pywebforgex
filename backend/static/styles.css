@@ -1,0 +1,26 @@
+
+:root{ --brand:#00ffa6; --bg:rgba(0,0,0,0.65); font-family: Inter, system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif }
+body{ margin:0; background:#000 url('assets/pywebforge_animation.gif') center/cover fixed no-repeat; color:var(--brand)}
+header{ padding:12px 16px; background:var(--bg); border-bottom:1px solid #1f2937}
+h1{ margin:0 0 8px 0 }
+.banner{ max-height:60px; display:block; margin-bottom:8px }
+nav button{ margin-right:8px; background:transparent; border:1px solid var(--brand); color:var(--brand); padding:6px 10px; border-radius:8px; cursor:pointer}
+.tab{ padding:16px }
+.grid{ display:grid; grid-template-columns: 1fr 1fr; gap:16px }
+label{ display:block; margin-top:8px }
+input,select,textarea{ width:100%; background:transparent; border:1px solid var(--brand); color:var(--brand); border-radius:6px; padding:8px }
+#funcList{ list-style:none; padding:0; margin:0; border:1px solid #1f2937; border-radius:8px; max-height:60vh; overflow:auto }
+#funcList li{ padding:6px 8px; border-bottom:1px dashed #1f2937; cursor:pointer }
+#funcList li:hover{ background:rgba(255,255,255,0.05) }
+.authbar{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:8px }
+.authbar input{ padding:6px 8px; border-radius:8px; border:1px solid var(--brand); background:#020617; color:var(--brand)}
+.modes label{ margin-right:10px }
+.row{ margin-top:8px }
+pre{ background:rgba(0,0,0,0.55); padding:8px; border-radius:8px; border:1px solid #1f2937; overflow:auto }
+.hint{ opacity:0.9; font-size:12px; margin:6px 0 12px 0 }
+.help-card{ border:1px solid var(--brand); border-radius:10px; padding:8px; margin-bottom:12px; background:rgba(0,0,0,0.4) }
+.help-title{ font-weight:600; margin-bottom:6px }
+
+.brand-name{font-size:18px;margin-top:-6px;opacity:0.9}
+
+.brand-name{font-size:18px;margin-top:-6px;opacity:0.9}

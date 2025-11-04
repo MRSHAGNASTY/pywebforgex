@@ -1,0 +1,11 @@
+
+apiVersion: v1
+kind: Service
+metadata: { name: pywebforge }
+spec:
+  type: {{ .Values.service.type }}
+  selector: { app: pywebforge }
+  ports:
+    - protocol: TCP
+      port: {{ .Values.service.port }}
+      targetPort: 7860

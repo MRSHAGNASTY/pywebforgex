@@ -1,0 +1,3 @@
+- Headers: X-API-Key, X-Tenant, X-User/X-Email/X-Roles
+- Policy file under policy/policy.yaml
+- Optional analytics: set PYWEBFORGE_HOOK_URL to receive event posts

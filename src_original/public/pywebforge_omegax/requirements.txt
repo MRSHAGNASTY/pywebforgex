@@ -1,0 +1,17 @@
+Flask==3.0.3
+Flask-Cors==4.0.1
+Flask-Sock==0.7.0
+Werkzeug==3.0.4
+Jinja2==3.1.4
+itsdangerous==2.2.0
+markdown==3.6
+networkx==3.3
+pyvis==0.3.2
+graphlib-backport==1.0.3; python_version<"3.9"
+asttokens==2.4.1
+black==24.4.2
+pytest==8.2.0
+coverage==7.6.1
+requests==2.32.3
+pydantic==2.9.2
+rich==13.9.2

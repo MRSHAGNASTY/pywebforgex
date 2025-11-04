@@ -1,0 +1,108 @@
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Py Forge Omega X</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link rel="icon" href="assets/pywebforge_dark ICON.png"/>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+<header>
+  <img src="assets/pywebforge_banner.png" alt="banner" class="banner"/>
+  <div class="brand-name">Py Forge Omega X</div>
+  <nav>
+    <button data-tab="upload">Upload</button>
+    <button data-tab="scan">Scan</button>
+    <button data-tab="lab">Functions Lab</button>
+    <button data-tab="deploy">Deploy</button>
+  </nav>
+  <div id="authBar" class="authbar">
+    <input id="apiKey" placeholder="X-API-Key"/>
+    <input id="tenant" placeholder="tenant (X-Tenant)" value="public"/>
+    <div class="modes" title="Choose execution mode. Dry-Run plans without executing. Record saves results for Replay.">
+      <label><input type="radio" name="mode" value="live" checked/> Live</label>
+      <label><input type="radio" name="mode" value="dry-run"/> Dry-Run</label>
+      <label><input type="radio" name="mode" value="record"/> Record</label>
+      <label><input type="radio" name="mode" value="replay"/> Replay</label>
+    </div>
+  </div>
+</header>
+<main>
+<section id="upload" class="tab">
+  <h2>Upload Project</h2>
+  <div class="hint">Upload a .zip of your source. It is placed under <code>src_original/&lt;tenant&gt;</code>.</div>
+  <input type="file" id="zipFile"/>
+  <button id="uploadBtn" title="Upload and unpack into tenant folder">Upload</button>
+  <pre id="uploadOut"></pre>
+</section>
+
+<section id="scan" class="tab" style="display:none">
+  <h2>Scan</h2>
+  <div class="hint">Scans python files for functions and docstrings to build the registry.</div>
+  <button id="scanBtn">Scan</button>
+  <pre id="scanOut"></pre>
+</section>
+
+<section id="lab" class="tab" style="display:none">
+  <h2>Registry & Execute</h2>
+  <div class="hint">Select a function to see docs and input templates. Hover elements for help.</div>
+  <div class="actions">
+    <label title="Choose code base: repaired (after AI repair), mutated, or original (uploaded)">
+      Target:
+      <select id="targetBase">
+        <option value="repaired">repaired</option>
+        <option value="mutated">mutated</option>
+        <option value="original">original</option>
+      </select>
+    </label>
+    <button id="refreshReg" title="Rebuild the function list from the selected target">Refresh Registry</button>
+  </div>
+  <div class="grid">
+    <div>
+      <ul id="funcList"></ul>
+    </div>
+    <div>
+      <div class="help-card" id="helpCard">
+        <div class="help-title">Function Help</div>
+        <div class="help-body">
+          <div><b>Signature:</b> <code id="helpSig"></code></div>
+          <div><b>Doc:</b> <span id="helpDoc"></span></div>
+          <div><b>Template Args:</b> <pre id="helpArgs">[]</pre></div>
+          <div><b>Template Kwargs:</b> <pre id="helpKwargs">{}</pre></div>
+        </div>
+      </div>
+      <label>Quick Input Library</label>
+      <select id="inputLibrary" title="Pick a preset input template">
+        <option value="">-- select a template --</option>
+        <option value='[1,2]'>Math: two numbers</option>
+        <option value='["path/to/file.txt"]'>File: single path</option>
+        <option value='["requests","flask"]'>Deps: module names</option>
+      </select>
+      <label>Module path</label>
+      <input id="modulePath" placeholder="path/to/module.py" title="The Python module relative to the selected target"/>
+      <label>Function name</label>
+      <input id="functionName" placeholder="function_name" title="Function to invoke"/>
+      <label>Args (JSON array)</label>
+      <textarea id="argsJson" rows="5" title="Example: [1, 'x']">[]</textarea>
+      <label>Kwargs (JSON object)</label>
+      <textarea id="kwargsJson" rows="5" title='Example: {"flag": true}'>{"flag": false}</textarea>
+      <div class="row">
+        <label title="Provide AI hints on failure"><input type="checkbox" id="withAI"/> With AI Assist</label>
+      </div>
+      <button id="execBtn" title="Execute with selected mode">Execute</button>
+      <pre id="execOutput"></pre>
+    </div>
+  </div>
+</section>
+
+<section id="deploy" class="tab" style="display:none">
+  <h2>Packaging</h2>
+  <div class="hint">Build a downloadable package containing backend, frontend, docs and deploy assets.</div>
+  <a href="/api/package" target="_blank"><button id="pkgBtn">Download Enterprise Package</button></a>
+</section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: pywebforge }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: pywebforge } }
+  template:
+    metadata: { labels: { app: pywebforge } }
+    spec:
+      containers:
+        - name: backend
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports: [{containerPort: 7860}]
+          env:
+            - name: PYWEBFORGE_KEYS
+              value: "{{ .Values.env.PYWEBFORGE_KEYS }}"
+            - name: EgressDeny
+              value: "{{ .Values.env.EgressDeny }}"

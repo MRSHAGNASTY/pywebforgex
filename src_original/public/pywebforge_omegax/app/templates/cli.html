@@ -1,0 +1,16 @@
+<!doctype html><html><head><meta charset="utf-8" /><title>Sandbox CLI</title><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="x-api-key" content="change-me-now"><meta name="x-csrf" content="csrf-secret-change-me">
+<style>body{font-family:system-ui,sans-serif;margin:20px;background:#0f1115;color:#e6edf3}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}input,button{font:inherit}input{background:#0d1117;border:1px solid #30363d;color:#e6edf3;border-radius:8px;padding:8px;width:520px}button{border:1px solid #30363d;background:#1f6feb;color:#fff;border-radius:8px;padding:8px 12px;cursor:pointer}pre{background:#0d1117;border:1px solid #30363d;padding:12px;border-radius:8px;overflow:auto;height:50vh}</style></head>
+<body><div class="row"><label>Project: <input id="project" placeholder="/abs/path/to/project" /></label></div>
+<div class="row" style="margin-top:8px;"><label>Command: <input id="cmd" placeholder="python -m your_package --help" /></label><button id="run">Run (one-shot)</button><button id="runStream">Run (stream)</button></div>
+<h3>Output</h3><pre id="out"></pre>
+<script>
+function set(k,v){localStorage.setItem(k,v);} function get(k){return localStorage.getItem(k)||"";} 
+project.value=get('pwf_project'); cmd.value=get('pwf_cmd'); project.addEventListener('input',e=>set('pwf_project',e.target.value)); cmd.addEventListener('input',e=>set('pwf_cmd',e.target.value));
+function token(name){const el=document.querySelector(`meta[name="${name}"]`); return el? el.content : "";}
+run.addEventListener('click', async()=>{ out.textContent=''; const payload={project:project.value,cmd:cmd.value,timeout:90,allow_network:false,csrf_token:token('x-csrf')};
+ const r=await fetch('/api/sandbox/exec',{method:'POST',headers:{'Content-Type':'application/json','X-API-Key':token('x-api-key')},body:JSON.stringify(payload)});
+ const j=await r.json(); out.textContent=JSON.stringify(j,null,2); });
+runStream.addEventListener('click', async()=>{ out.textContent=''; const url=`/api/sandbox/exec_stream?project=${encodeURIComponent(project.value)}&cmd=${encodeURIComponent(cmd.value)}&allow_network=0`;
+ const es=new EventSource(url); es.onmessage=(e)=>{ out.textContent+=e.data+"\n"; if(e.data.startsWith("<<exit ")) es.close(); }; es.onerror=()=>es.close(); });
+</script></body></html>

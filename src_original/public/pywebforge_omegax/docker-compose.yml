@@ -1,0 +1,14 @@
+version: "3.9"
+services:
+  pywebforge:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - OLLAMA_HOST=${OLLAMA_HOST:-http://host.docker.internal:11434}
+      - PYWEBFORGE_SECRET=${PYWEBFORGE_SECRET:-change-me}
+    volumes:
+      - ./projects:/srv/pywebforge/projects
+      - ./generated:/srv/pywebforge/generated
+      - ./logs:/srv/pywebforge/logs

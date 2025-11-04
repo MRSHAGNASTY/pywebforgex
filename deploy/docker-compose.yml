@@ -1,0 +1,15 @@
+version: '3.9'
+services:
+  backend:
+    build: ..
+    ports: ['7860:7860']
+    environment:
+      - PYWEBFORGE_KEYS=${PYWEBFORGE_KEYS:-admin:dev-admin,editor:dev-editor,viewer:dev-viewer}
+      - EgressDeny=1
+    volumes:
+      - ./data:/app/backend/storage
+  frontend:
+    image: nginx:alpine
+    ports: ['8080:80']
+    volumes:
+      - ../frontend:/usr/share/nginx/html:ro
