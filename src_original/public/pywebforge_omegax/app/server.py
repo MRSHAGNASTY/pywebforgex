@@ -25,7 +25,24 @@ def create_app():
     app = Flask(__name__, template_folder="templates", static_folder="static")
     app.config["SECRET_KEY"] = os.environ.get("PYWEBFORGE_SECRET", "dev-secret")
     app.logger.setLevel(logging.INFO)
-    CORS(app)
+    allowed = [o.strip() for o in os.getenv("ALLOWED_ORIGINS", "").split(",") if o.strip()]
+    allow_creds = os.getenv("CORS_CREDENTIALS", "false").lower() == "true"
+    CORS(app, resources={r"/api/*": {"origins": allowed or "*"}}, supports_credentials=allow_creds, methods=["GET","POST","PUT","PATCH","DELETE","OPTIONS"], allow_headers=["Content-Type","Authorization","X-Requested-With"])
+
+    # ===== Env-driven CORS (Hostinger ↔ Render) =====
+    # Set ALLOWED_ORIGINS in Render to your exact Hostinger URL(s), e.g.:
+    # ALLOWED_ORIGINS=https://covenant-firm.com
+    allowed = [o.strip() for o in os.getenv("ALLOWED_ORIGINS", "").split(",") if o.strip()]
+    allow_creds = os.getenv("CORS_CREDENTIALS", "false").lower() == "true"
+    CORS(
+        app,
+        resources={r"/api/*": {"origins": allowed or "*"}},
+        supports_credentials=allow_creds,
+        methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+        allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
+    )
+    # ================================================
+
     Sock(app)  # for future websocket routes
 
     # Blueprints
